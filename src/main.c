@@ -1,5 +1,5 @@
 /*
- * Hashcmp - a program for comparing two 256 bit hashes provided in two separate files
+ * Bitcmp - a program for comparing two 256 bit hashes provided in two separate files
  */
 
 #include <getopt.h>
