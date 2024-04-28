@@ -1,12 +1,25 @@
 /*
- * Bitcmp - a program for comparing two 256 bit hashes provided in two separate files
+ * Bitcmp - a program for comparing two files
  */
 
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+
 const char* program_name;
+
+unsigned long get_file_size (FILE* file)
+{
+    unsigned long size = 0;
+
+    fseek (file, 0L, SEEK_END);
+    size = ftell (file);
+    fseek (file, 0L, SEEK_SET);
+
+    return size;
+}
 
 void print_usage (FILE* stream, int exit_code)
 {
@@ -92,10 +105,12 @@ int main (int argc, char* argv[])
             print_usage (stderr, 1);
     }
 
-    unsigned int diff_count = 0;
+    unsigned int first_size = get_file_size (first_file);
+    unsigned int second_size = get_file_size (second_file);
 
-    /* A 256 bit hash has 32 bytes*/
-    for (int i = 0; i < 32; ++i)
+    unsigned int diff_count = abs (first_size - second_size);
+
+    for (int i = 0; i < min (first_size, second_size); ++i)
     {
             char a = 0;
             char b = 0;
@@ -115,8 +130,8 @@ int main (int argc, char* argv[])
     /* Print the result */
     fprintf (stdout, "The difference between the two hashes is %d bits\n", diff_count);
 
-    fclose(first_file);
-    fclose(second_file);
+    fclose (first_file);
+    fclose (second_file);
 
     return 0;
 }
